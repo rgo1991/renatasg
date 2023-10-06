@@ -61,13 +61,12 @@ def account():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             current_user.image_file = picture_file
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        db.session.commit()
+        current_user.username = form.username.data #set new username to be what the user entered in the form
+        current_user.email = form.email.data #set new email what the user entered in the form
+        db.session.commit() #commit changes to database
         flash('Your account has been updated', 'success')
         return redirect(url_for('users.account'))
-    # Display current user info in the form
-    elif request.method == 'GET':
+    elif request.method == 'GET': #display current account information as default for this page
         form.username.data = current_user.username
         form.email.data = current_user.email
     # Set user profile pic to current_user.image_file
@@ -78,7 +77,7 @@ def account():
 
 @users.route("/user/<string:username>")
 def user_posts(username):
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1, type=int) 
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user)\
         .order_by(Post.date_posted.desc())\
@@ -91,7 +90,7 @@ def reset_request():
     # If user is already logged in, clicking on register will redirect them to home page instead.
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
-    form = RequestResetForm()
+    form = RequestResetForm() #create an object from the requestresetform class
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
